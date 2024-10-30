@@ -1,51 +1,57 @@
-
-name: 部署文档
-
+# 工作流的名称
+name: Build and deploy 
+# 从工作流生成的工作流运行的名称
+run-name: Deploy by @${{ github.actor }}  
+# 触发工作流的事件
 on:
   push:
-    branches:
-      # 确保这是你正在使用的分支名称
-      - main
-
-permissions:
-  contents: write
-
+    branches: [ main ] # 当 main 分支有新的推送时，此工作流会被启动。
+  workflow_dispatch: # 或者手动触发工作流时，此工作流会被启动。
+# 当前流程要执行的任务
 jobs:
-  deploy-gh-pages:
+  build:
+    # 这部分指定了作业将在 ubuntu-latest 环境下运行。
     runs-on: ubuntu-latest
+	# 每个任务下的运行步骤，短横杠 - 表示一个步骤，从上至下依次执行。
     steps:
-      - name: Checkout
-        uses: actions/checkout@v3
+      - name: checkout # 检出代码
+      - uses: actions/checkout@v2 # 使用 actions/checkout action 检出代码到工作空间。
+      
+	  # 这一步安装 Node.js v16。
+      - name: Use Node.js
+        uses: actions/setup-node@v1
         with:
-          fetch-depth: 0
-          # 如果你文档需要 Git 子模块，取消注释下一行
-          # submodules: true
-
-      - name: 安装 pnpm
-        uses: pnpm/action-setup@v2
+          node-version: '16'
+            
+     # 缓存 npm node_modules
+      - name: Cache dependencies
+        uses: actions/cache@v3
+        id: npm-cache
         with:
-          run_install: true
-          version: 8
+          path: |
+     		~/.npm
+      		**/node_modules
+          key: ${{ runner.os }}-npm-cache-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-npm-cache-
 
+      # 安装依赖 npm
+      - name: Install dependencies
+        # 如果没有命中缓存才执行 npm install
+        if: steps.npm-cache.outputs['restore-keys'] == ''
+        run: npm install
 
-      - name: 设置 Node.js
-        uses: actions/setup-node@v3
+     # 运行构建脚本
+      - name: Run Build Script
+        run: npm run build
+        
+      - name: Deploy
+        uses: JamesIves/github-pages-deploy-action@releases/v3
         with:
-          node-version: 20
-          cache: pnpm
-
-
-      - name: 构建文档
-        env:
-          NODE_OPTIONS: --max_old_space_size=8192
-        run: |-
-          pnpm i sass -D
-          pnpm run docs:build
-          > docs/.vuepress/dist/.nojekyll
-
-      - name: 部署文档
-        uses: JamesIves/github-pages-deploy-action@v4
-        with:
-          # 这是文档部署到的分支名称
-          branch: gh-pages
-          folder: docs/.vuepress/dist
+        # env:
+          # 部署到 FrontPages 分支
+          BRANCH: FrontPages
+          # 部署目录为 VuePress 的默认输出目录
+          FOLDER: docs/.vuepress/dist
+          # 当前仓库的密钥
+          SSH_PRIVATE_KEY: ${{ secrets.DEPLOY_PRIVATE_KEY }}
