@@ -65,25 +65,24 @@ export default defineConfigWithTheme<ThemeConfig>({
   // sitemap: {
   //   hostname: 'https://vitepress-theme-bluearchive.vercel.app',
   // },
-  title: "Sensei's 部落格",
+  title: "ZCSBlog",
   description: "Sensei's 部落格",
   themeConfig: {
     // navBar
     menuList: [
       { name: '首页', url: '' },
-      { name: '标签', url: 'tags/' },
+      { name: '清单', url: 'list/' },
     ],
 
     //banner区配置
     videoBanner: false,
-    name: "Sensei's 部落格",
-    welcomeText: 'Hello, VitePress',
-    motto: ['和你的日常，就是奇迹', '何気ない日常で、ほんの少しの奇跡を見つける物語。'],
+    name: "ZCS-Blog",
+    welcomeText: 'VitePress',
+    motto: ['和你的日常，就是奇迹', '人无远虑，必有近忧'],
     social: [
-      { icon: 'github', url: 'https://github.com/' },
-      { icon: 'bilibili', url: 'https://www.bilibili.com/' },
-      { icon: 'qq', url: 'https://im.qq.com/index/' },
-      { icon: 'wechat', url: 'https://weixin.qq.com/' },
+      { icon: 'github', url: 'https://github.com/zcsfish' },
+      { icon: 'bilibili', url: 'https://b23.tv/QbeN4vq' },
+      { icon: 'qq', url: 'https://tool.gljlw.com/qq/?qq=3758258872' },
     ],
 
     //footer配置
