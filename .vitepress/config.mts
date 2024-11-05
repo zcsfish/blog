@@ -72,6 +72,7 @@ export default defineConfigWithTheme<ThemeConfig>({
     menuList: [
       { name: '首页', url: '' },
       { name: '清单', url: 'list/' },
+      { name: '关于', url: 'about/' }
     ],
 
     //banner区配置
